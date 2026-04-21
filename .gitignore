@@ -1,0 +1,14 @@
+node_modules
+dist
+*.tsbuildinfo
+.DS_Store
+
+# Spreadsheet inputs (participant data — never commit)
+*.xlsx
+*.xls
+*.csv
+~$*
+
+# Editor/IDE
+.vscode
+.idea
