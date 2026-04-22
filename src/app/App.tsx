@@ -13,6 +13,7 @@ import { generateMockParticipants, parseSpreadsheetFile, type ParseResult } from
 import { clearWave, drawWave, initSelection } from '../features/selection/selection';
 import { createDrawLog, downloadDrawLog } from '../lib/logger/drawLog';
 import { createSeed } from '../lib/random/seededRandom';
+import { DEFAULT_PARTICIPANTS } from '../data/participants';
 import { playStageCue } from '../lib/audio/cues';
 import type { Participant } from '../types/participant';
 import type { AppStage, DrawLog, SelectionResult } from '../types/selection';
@@ -56,6 +57,18 @@ export function App() {
   useEffect(() => {
     setWaveStarted(false);
   }, [stage, stageRunId]);
+
+  useEffect(() => {
+    if (DEFAULT_PARTICIPANTS.length < 20) return;
+    applyParseResult({
+      participants: DEFAULT_PARTICIPANTS,
+      rawRows: DEFAULT_PARTICIPANTS.length,
+      droppedRows: 0,
+      duplicateRows: 0,
+    });
+    setFileName('Registered participants');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
