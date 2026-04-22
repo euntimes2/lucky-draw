@@ -9,6 +9,7 @@ type WinnerRevealStageProps = {
 
 const CONFETTI_COLORS = ['#76b900', '#b6ff6a', '#d4ff7a', '#f6fff0', '#ffffff'];
 const BURST_INTERVAL_MS = 1100;
+const BURST_DURATION_MS = 5000;
 
 export function WinnerRevealStage({ winner }: WinnerRevealStageProps) {
   useEffect(() => {
@@ -49,8 +50,10 @@ export function WinnerRevealStage({ winner }: WinnerRevealStageProps) {
 
     fire();
     const interval = window.setInterval(fire, BURST_INTERVAL_MS);
+    const stop = window.setTimeout(() => window.clearInterval(interval), BURST_DURATION_MS);
     return () => {
       window.clearInterval(interval);
+      window.clearTimeout(stop);
       confetti.reset();
     };
   }, []);
