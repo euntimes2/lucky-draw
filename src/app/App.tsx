@@ -1,14 +1,15 @@
 import { startTransition, useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { OperatorPanel } from '../components/common/OperatorPanel';
-import { IdleStage } from '../components/stage/IdleStage';
+import { IdleStage, type DrawMode } from '../components/stage/IdleStage';
+import { STAGE_LABELS } from './stages';
 import { ParticipantScanStage } from '../components/stage/ParticipantScanStage';
 import { WaveRevealStage } from '../components/stage/WaveRevealStage';
 import { FinalGridStage } from '../components/stage/FinalGridStage';
 import { TransformStage } from '../components/stage/TransformStage';
 import { RouletteStage } from '../components/roulette/RouletteStage';
 import { WinnerRevealStage } from '../components/stage/WinnerRevealStage';
-import { generateMockParticipants, parsePastedParticipants, parseSpreadsheetFile, type ParseResult } from '../features/input/parser';
+import { generateMockParticipants, parseSpreadsheetFile, type ParseResult } from '../features/input/parser';
 import { clearWave, drawWave, initSelection } from '../features/selection/selection';
 import { createDrawLog, downloadDrawLog } from '../lib/logger/drawLog';
 import { createSeed } from '../lib/random/seededRandom';
@@ -24,17 +25,25 @@ type ParseStats = {
   validRows: number;
 };
 
+function resolveStageLabel(stage: AppStage, mode: DrawMode): string {
+  if (mode === 'pick5') {
+    if (stage === 'wave1') return '5 survived';
+    if (stage === 'final20') return 'Final 5';
+  }
+  return STAGE_LABELS[stage];
+}
+
 export function App() {
   const [stage, setStage] = useState<AppStage>('idle');
   const [stageRunId, setStageRunId] = useState(0);
   const [waveStarted, setWaveStarted] = useState(false);
+  const [mode, setMode] = useState<DrawMode>('pick1');
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [selection, setSelection] = useState<SelectionResult>();
   const [rouletteWinner, setRouletteWinner] = useState<Participant>();
   const [drawLog, setDrawLog] = useState<DrawLog>();
   const [seed, setSeed] = useState('');
   const [fileName, setFileName] = useState<string>();
-  const [pastedValue, setPastedValue] = useState('');
   const [stats, setStats] = useState<ParseStats>();
   const [error, setError] = useState<string>();
   const [soundEnabled, setSoundEnabled] = useState(false);
@@ -80,16 +89,6 @@ export function App() {
     }
   }
 
-  async function handleParsePaste() {
-    setError(undefined);
-    setFileName(undefined);
-    try {
-      applyParseResult(await parsePastedParticipants(pastedValue));
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Could not parse pasted data.');
-    }
-  }
-
   function handleMockData() {
     const mockParticipants = generateMockParticipants(700);
     const mockResult: ParseResult = {
@@ -99,7 +98,6 @@ export function App() {
       duplicateRows: 0,
     };
     setFileName('700 rehearsal candidates');
-    setPastedValue('');
     applyParseResult(mockResult);
   }
 
@@ -145,12 +143,25 @@ export function App() {
 
   function handleNext() {
     if (!selection) return;
-    startTransition(() => setStage((current) => nextStage(current)));
+    if (mode === 'pick5' && stage === 'final20') return; // terminal — use Restart
+    startTransition(() =>
+      setStage((current) => {
+        let next = nextStage(current);
+        if (next === 'wave2') next = nextStage(next); // both modes draw in a single wave
+        return next;
+      })
+    );
     setStageRunId((value) => value + 1);
   }
 
   function handlePrevious() {
-    startTransition(() => setStage((current) => previousStage(current)));
+    startTransition(() =>
+      setStage((current) => {
+        let prev = previousStage(current);
+        if (prev === 'wave2') prev = previousStage(prev);
+        return prev;
+      })
+    );
     setStageRunId((value) => value + 1);
   }
 
@@ -189,13 +200,16 @@ export function App() {
     if (drawLog) downloadDrawLog(drawLog);
   }
 
+  const waveSize = mode === 'pick5' ? 5 : 20;
+
   function handleStartWave() {
     if (!selection) return;
     if (stage !== 'wave1' && stage !== 'wave2') return;
-    const alreadyDrawn = stage === 'wave1' ? selection.wave1.length === 10 : selection.wave2.length === 10;
+    const currentWave = stage === 'wave1' ? selection.wave1 : selection.wave2;
+    const alreadyDrawn = currentWave.length === waveSize;
     if (!alreadyDrawn) {
       const newSeed = createSeed();
-      const nextSelection = drawWave(selection, stage, newSeed);
+      const nextSelection = drawWave(selection, stage, newSeed, waveSize);
       setSelection(nextSelection);
       setSeed(
         [nextSelection.seeds.wave1, nextSelection.seeds.wave2].filter(Boolean).join(' | ')
@@ -215,22 +229,40 @@ export function App() {
     setWaveStarted(true);
   }
 
+  function handleModeChange(nextMode: DrawMode) {
+    if (stage !== 'idle' && stage !== 'data_loaded') return;
+    if (mode === nextMode) return;
+    setMode(nextMode);
+    if (selection) {
+      const cleared = { ...selection, wave1: [], wave2: [], final20: [], seeds: {}, winner: undefined };
+      setSelection(cleared);
+      setRouletteWinner(undefined);
+      setSeed('');
+      setDrawLog((current) =>
+        current
+          ? { ...current, wave1Ids: [], wave2Ids: [], final20Ids: [], winnerId: '', seed: '' }
+          : current
+      );
+    }
+  }
+
   function renderStage() {
     if (!selection) {
       return (
         <IdleStage
           key={`idle-${stageRunId}`}
           fileName={fileName}
-          pastedValue={pastedValue}
           error={error}
-          stats={stats}
+          mode={mode}
           onFile={handleFile}
-          onPasteChange={setPastedValue}
-          onParsePaste={handleParsePaste}
           onMock={handleMockData}
+          onModeChange={handleModeChange}
         />
       );
     }
+
+    const wave1Title = mode === 'pick5' ? '5 survived' : '20 survived';
+    const waveRevealSpeed = mode === 'pick5' ? 3 : 1;
 
     switch (stage) {
       case 'scan':
@@ -239,11 +271,13 @@ export function App() {
         return (
           <WaveRevealStage
             key={`wave1-${stageRunId}`}
-            title="10 survived"
+            title={wave1Title}
             candidates={selection.wave1}
             pool={selection.allParticipants}
             direction="left"
             started={waveStarted}
+            revealSpeedFactor={waveRevealSpeed}
+            waveSize={waveSize}
           />
         );
       case 'wave2':
@@ -255,10 +289,18 @@ export function App() {
             pool={selection.allParticipants}
             direction="right"
             started={waveStarted}
+            revealSpeedFactor={waveRevealSpeed}
+            waveSize={waveSize}
           />
         );
       case 'final20':
-        return <FinalGridStage key={`final20-${stageRunId}`} finalists={selection.final20} />;
+        return (
+          <FinalGridStage
+            key={`final20-${stageRunId}`}
+            finalists={selection.final20}
+            showFireworks={mode === 'pick5'}
+          />
+        );
       case 'transform':
         return <TransformStage key={`transform-${stageRunId}`} finalists={selection.final20} winnerId={rouletteWinner?.id ?? ''} />;
       case 'roulette':
@@ -286,13 +328,11 @@ export function App() {
           <IdleStage
             key={`loaded-${stageRunId}`}
             fileName={fileName}
-            pastedValue={pastedValue}
             error={error}
-            stats={stats}
+            mode={mode}
             onFile={handleFile}
-            onPasteChange={setPastedValue}
-            onParsePaste={handleParsePaste}
             onMock={handleMockData}
+            onModeChange={handleModeChange}
           />
         );
     }
@@ -302,8 +342,13 @@ export function App() {
     <main className="app-shell">
       <div className="ambient-grid" />
       <AnimatePresence mode="wait">{renderStage()}</AnimatePresence>
+      <div className="brand-footer" aria-hidden="true">
+        <img src="/snu.png" alt="Seoul National University" />
+        <img src="/nvidia_logo.png" alt="NVIDIA" />
+      </div>
       <OperatorPanel
         stage={stage}
+        stageLabel={resolveStageLabel(stage, mode)}
         participantCount={stats?.rawRows ?? participants.length}
         validCount={selection?.allParticipants.length ?? participants.length}
         seed={seed}
@@ -311,6 +356,8 @@ export function App() {
         canStart={Boolean(selection)}
         drawLog={drawLog}
         waveStarted={waveStarted}
+        waveSize={waveSize}
+        terminalAtFinal={mode === 'pick5'}
         onStart={handleStart}
         onNext={handleNext}
         onPrevious={handlePrevious}

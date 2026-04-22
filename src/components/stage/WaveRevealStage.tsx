@@ -10,12 +10,14 @@ type WaveRevealStageProps = {
   pool: Participant[];
   direction: 'left' | 'right';
   started: boolean;
+  revealSpeedFactor?: number;
+  waveSize?: number;
 };
 
 const DRAW_DURATION_MS = 4000;
 const SHUFFLE_INTERVAL_MS = 87;
 
-export function WaveRevealStage({ title, candidates, pool, direction, started }: WaveRevealStageProps) {
+export function WaveRevealStage({ title, candidates, pool, direction, started, revealSpeedFactor = 1, waveSize = 10 }: WaveRevealStageProps) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [tick, setTick] = useState(0);
 
@@ -92,7 +94,7 @@ export function WaveRevealStage({ title, candidates, pool, direction, started }:
               <span />
               <span />
             </div>
-            <p className="wave-awaiting-hint">Press Draw 10 to begin</p>
+            <p className="wave-awaiting-hint">Press Draw {waveSize} to begin</p>
           </motion.div>
         ) : phase === 'drawing' ? (
           <motion.div
@@ -142,10 +144,10 @@ export function WaveRevealStage({ title, candidates, pool, direction, started }:
                   animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
                   transition={{
                     type: 'spring',
-                    stiffness: 120,
+                    stiffness: 120 / revealSpeedFactor,
                     damping: 16,
                     mass: 1,
-                    delay: 0.15 + index * 0.28,
+                    delay: 0.15 + index * 0.28 * revealSpeedFactor,
                   }}
                 >
                   <span>{String(index + 1).padStart(2, '0')}</span>

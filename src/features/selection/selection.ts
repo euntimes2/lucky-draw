@@ -18,7 +18,8 @@ export function initSelection(participants: Participant[]): SelectionResult {
 export function drawWave(
   selection: SelectionResult,
   wave: 'wave1' | 'wave2',
-  seed: string
+  seed: string,
+  size = 10
 ): SelectionResult {
   const random = createSeededRandom(seed);
 
@@ -30,7 +31,7 @@ export function drawWave(
     pool = selection.allParticipants.filter((p) => !excluded.has(p.id));
   }
 
-  const picks = shuffleWithRandom(pool, random).slice(0, 10);
+  const picks = shuffleWithRandom(pool, random).slice(0, size);
 
   const next: SelectionResult = {
     ...selection,

@@ -1,4 +1,4 @@
-# NVIDIA DGX Spark Lucky Draw
+# NVIDIA Lucky Draw
 
 A stage-ready finalist selection web app for live events. Narrows ~700 participants to a single winner through a scripted multi-stage show: **700 → Wave 1 (10) → Wave 2 (10) → Final 20 → Spinning Wheel → Winner**.
 

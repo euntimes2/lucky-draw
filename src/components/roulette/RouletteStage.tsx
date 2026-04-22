@@ -15,15 +15,7 @@ const DECEL_EASE_POWER = 4;
 const ZOOM_TARGET_SCALE = 1.8;
 const WINNER_REVEAL_DELAY_MS = 1400;
 
-const SLICE_PALETTE: ReadonlyArray<{ fill: string; text: string }> = [
-  { fill: '#76b900', text: '#051006' }, // NVIDIA green
-  { fill: '#0a1406', text: '#f6fff0' }, // near-black
-  { fill: '#f6fff0', text: '#051006' }, // off-white
-];
-
-function sliceColor(index: number): { fill: string; text: string } {
-  return SLICE_PALETTE[index % SLICE_PALETTE.length];
-}
+const SLICE_GRADIENT_IDS = ['sliceGradA', 'sliceGradB', 'sliceGradC'] as const;
 
 function displayName(full: string, maxChars = 8): string {
   const first = (full.split('/')[0] ?? full).trim();
@@ -39,7 +31,7 @@ export function RouletteStage({ finalists, onComplete }: RouletteStageProps) {
 
   const angleRef = useRef(0);
   const phaseRef = useRef<Phase>('spinning');
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number | null>(null);
   const stopStateRef = useRef<{ start: number; from: number; to: number } | null>(null);
   const onCompleteRef = useRef(onComplete);
@@ -134,13 +126,12 @@ export function RouletteStage({ finalists, onComplete }: RouletteStageProps) {
       const largeArc = sliceAngle > 180 ? 1 : 0;
       const d = `M ${CENTER},${CENTER} L ${x1},${y1} A ${RADIUS},${RADIUS} 0 ${largeArc} 1 ${x2},${y2} Z`;
       const midDeg = (startDeg + endDeg) / 2;
-      const palette = sliceColor(i);
       return {
         id: candidate.id,
         d,
+        startDeg,
         midDeg,
-        fill: palette.fill,
-        textColor: palette.text,
+        gradientId: SLICE_GRADIENT_IDS[i % SLICE_GRADIENT_IDS.length],
         nameLabel: displayName(candidate.name),
       };
     });
@@ -171,30 +162,113 @@ export function RouletteStage({ finalists, onComplete }: RouletteStageProps) {
             viewBox={`0 0 ${SIZE} ${SIZE}`}
             style={{ transform: `rotate(${angle}deg)` }}
           >
+            <defs>
+              <radialGradient id="sliceGradA" gradientUnits="userSpaceOnUse" cx={CENTER} cy={CENTER} r={RADIUS}>
+                <stop offset="0%" stopColor="#030805" />
+                <stop offset="58%" stopColor="#0a1a08" />
+                <stop offset="100%" stopColor="#1f4410" />
+              </radialGradient>
+              <radialGradient id="sliceGradB" gradientUnits="userSpaceOnUse" cx={CENTER} cy={CENTER} r={RADIUS}>
+                <stop offset="0%" stopColor="#020604" />
+                <stop offset="62%" stopColor="#071206" />
+                <stop offset="100%" stopColor="#0f2410" />
+              </radialGradient>
+              <radialGradient id="sliceGradC" gradientUnits="userSpaceOnUse" cx={CENTER} cy={CENTER} r={RADIUS}>
+                <stop offset="0%" stopColor="#051006" />
+                <stop offset="60%" stopColor="#14320e" />
+                <stop offset="100%" stopColor="#3a7814" />
+              </radialGradient>
+
+              <radialGradient id="hubGrad" gradientUnits="userSpaceOnUse" cx={CENTER} cy={CENTER} r={60}>
+                <stop offset="0%" stopColor="#1f3a11" />
+                <stop offset="55%" stopColor="#0a1808" />
+                <stop offset="100%" stopColor="#030805" />
+              </radialGradient>
+
+              <radialGradient id="rimGlow" gradientUnits="userSpaceOnUse" cx={CENTER} cy={CENTER} r={RADIUS + 18}>
+                <stop offset="92%" stopColor="rgba(118,185,0,0)" />
+                <stop offset="96%" stopColor="rgba(182,255,106,0.65)" />
+                <stop offset="100%" stopColor="rgba(118,185,0,0)" />
+              </radialGradient>
+
+              <filter id="dividerGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="1.4" />
+                <feMerge>
+                  <feMergeNode />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+
+              <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.9" />
+                <feMerge>
+                  <feMergeNode />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            {/* Outer soft halo */}
+            <circle cx={CENTER} cy={CENTER} r={RADIUS + 14} fill="url(#rimGlow)" />
+
+            {/* Slices */}
             <g>
               {slices.map((slice) => (
-                <g key={slice.id}>
-                  <path d={slice.d} fill={slice.fill} stroke="rgba(2,6,2,0.65)" strokeWidth="1.3" />
-                  <g transform={`rotate(${slice.midDeg + 90}, ${CENTER}, ${CENTER})`}>
-                    <text
-                      x={CENTER}
-                      y={CENTER - RADIUS * 0.78}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontFamily="Rajdhani, Aptos Display, sans-serif"
-                      fontWeight="800"
-                      fontSize="19"
-                      fill={slice.textColor}
-                    >
-                      {slice.nameLabel}
-                    </text>
-                  </g>
+                <path key={slice.id} d={slice.d} fill={`url(#${slice.gradientId})`} />
+              ))}
+            </g>
+
+            {/* Neon divider lines between slices */}
+            <g filter="url(#dividerGlow)">
+              {slices.map((slice) => {
+                const rad = (slice.startDeg * Math.PI) / 180;
+                const x = CENTER + RADIUS * Math.cos(rad);
+                const y = CENTER + RADIUS * Math.sin(rad);
+                return (
+                  <line
+                    key={`${slice.id}-div`}
+                    x1={CENTER}
+                    y1={CENTER}
+                    x2={x}
+                    y2={y}
+                    stroke="rgba(182,255,106,0.42)"
+                    strokeWidth="0.9"
+                  />
+                );
+              })}
+            </g>
+
+            {/* Slice labels */}
+            <g filter="url(#textGlow)">
+              {slices.map((slice) => (
+                <g key={`${slice.id}-text`} transform={`rotate(${slice.midDeg + 90}, ${CENTER}, ${CENTER})`}>
+                  <text
+                    x={CENTER}
+                    y={CENTER - RADIUS * 0.78}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontFamily="Rajdhani, Aptos Display, sans-serif"
+                    fontWeight="800"
+                    fontSize="19"
+                    fill="#f6fff0"
+                    letterSpacing="0.02em"
+                  >
+                    {slice.nameLabel}
+                  </text>
                 </g>
               ))}
             </g>
-            <circle cx={CENTER} cy={CENTER} r={RADIUS + 6} fill="none" stroke="rgba(118,185,0,0.55)" strokeWidth="4" />
-            <circle cx={CENTER} cy={CENTER} r={46} fill="#06100a" stroke="rgba(182,255,106,0.55)" strokeWidth="3" />
-            <circle cx={CENTER} cy={CENTER} r={16} fill="#b6ff6a" />
+
+            {/* Rim — double stroke for glow depth */}
+            <circle cx={CENTER} cy={CENTER} r={RADIUS + 1} fill="none" stroke="rgba(182,255,106,0.75)" strokeWidth="1.4" />
+            <circle cx={CENTER} cy={CENTER} r={RADIUS - 3} fill="none" stroke="rgba(118,185,0,0.35)" strokeWidth="1" />
+
+            {/* Center hub */}
+            <circle cx={CENTER} cy={CENTER} r={58} fill="url(#hubGrad)" />
+            <circle cx={CENTER} cy={CENTER} r={58} fill="none" stroke="rgba(182,255,106,0.55)" strokeWidth="1.2" />
+            <circle cx={CENTER} cy={CENTER} r={22} fill="none" stroke="rgba(182,255,106,0.3)" strokeWidth="0.9" />
+            <circle cx={CENTER} cy={CENTER} r={10} fill="#b6ff6a" filter="url(#dividerGlow)" />
+            <circle cx={CENTER} cy={CENTER} r={4} fill="#f6fff0" />
           </svg>
         </div>
       </div>

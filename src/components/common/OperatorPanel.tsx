@@ -1,8 +1,8 @@
 import type { AppStage, DrawLog } from '../../types/selection';
-import { STAGE_LABELS } from '../../app/stages';
 
 type OperatorPanelProps = {
   stage: AppStage;
+  stageLabel: string;
   participantCount: number;
   validCount: number;
   seed: string;
@@ -10,6 +10,8 @@ type OperatorPanelProps = {
   canStart: boolean;
   drawLog?: DrawLog;
   waveStarted: boolean;
+  waveSize: number;
+  terminalAtFinal: boolean;
   onStart: () => void;
   onNext: () => void;
   onPrevious: () => void;
@@ -27,6 +29,8 @@ function resolvePrimary(
   stage: AppStage,
   canStart: boolean,
   waveStarted: boolean,
+  waveSize: number,
+  terminalAtFinal: boolean,
   handlers: Pick<OperatorPanelProps, 'onStart' | 'onNext' | 'onRestart' | 'onStartWave'>
 ): PrimaryAction | null {
   switch (stage) {
@@ -39,7 +43,12 @@ function resolvePrimary(
     case 'wave1':
     case 'wave2':
       if (!waveStarted) {
-        return { label: 'Draw 10', onClick: handlers.onStartWave };
+        return { label: `Draw ${waveSize}`, onClick: handlers.onStartWave };
+      }
+      return { label: 'Next stage', onClick: handlers.onNext };
+    case 'final20':
+      if (terminalAtFinal) {
+        return { label: 'Restart show', onClick: handlers.onRestart };
       }
       return { label: 'Next stage', onClick: handlers.onNext };
     case 'winner':
@@ -51,6 +60,7 @@ function resolvePrimary(
 
 export function OperatorPanel({
   stage,
+  stageLabel,
   participantCount,
   validCount,
   seed,
@@ -58,6 +68,8 @@ export function OperatorPanel({
   canStart,
   drawLog,
   waveStarted,
+  waveSize,
+  terminalAtFinal,
   onStart,
   onNext,
   onPrevious,
@@ -68,7 +80,7 @@ export function OperatorPanel({
   onExportLog,
   onStartWave,
 }: OperatorPanelProps) {
-  const primary = resolvePrimary(stage, canStart, waveStarted, { onStart, onNext, onRestart, onStartWave });
+  const primary = resolvePrimary(stage, canStart, waveStarted, waveSize, terminalAtFinal, { onStart, onNext, onRestart, onStartWave });
 
   return (
     <>
@@ -87,7 +99,7 @@ export function OperatorPanel({
 
       <aside className="operator-panel" aria-label="Operator controls">
         <div className="operator-status">
-          <strong>{STAGE_LABELS[stage]}</strong>
+          <strong>{stageLabel}</strong>
           <span>{validCount.toLocaleString()} valid</span>
           <span>{participantCount.toLocaleString()} loaded</span>
           <span>Seed {seed || '—'}</span>

@@ -81,6 +81,25 @@ button:disabled {
   isolation: isolate;
 }
 
+.brand-footer {
+  position: fixed;
+  left: clamp(1rem, 2.5vw, 2rem);
+  bottom: clamp(1rem, 2.5vh, 1.75rem);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 1.4vw, 1.4rem);
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.brand-footer img {
+  height: clamp(6rem, 12.6vh, 9.6rem);
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0.3rem 0.8rem rgba(0, 0, 0, 0.55));
+}
+
 .ambient-grid {
   position: fixed;
   inset: 0;
@@ -153,9 +172,34 @@ h1 {
 
 .hero-subtitle {
   white-space: nowrap;
-  color: var(--text);
-  font-weight: 600;
+  color: #f9fff0;
+  font-size: clamp(3rem, 7.6vw, 7.2rem);
+  font-weight: 700;
   letter-spacing: -0.045em;
+  text-shadow:
+    0 0 0.45rem rgba(255, 255, 255, 0.7),
+    0 0 1.2rem rgba(182, 255, 106, 0.55),
+    0 0 2.4rem rgba(118, 185, 0, 0.45),
+    0 0 4rem rgba(118, 185, 0, 0.3);
+  filter: drop-shadow(0 0 1.2rem rgba(118, 185, 0, 0.32));
+  animation: heroSubtitleFlicker 4.8s ease-in-out infinite;
+}
+
+@keyframes heroSubtitleFlicker {
+  0%, 100% {
+    text-shadow:
+      0 0 0.45rem rgba(255, 255, 255, 0.7),
+      0 0 1.2rem rgba(182, 255, 106, 0.55),
+      0 0 2.4rem rgba(118, 185, 0, 0.45),
+      0 0 4rem rgba(118, 185, 0, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 0.55rem rgba(255, 255, 255, 0.85),
+      0 0 1.6rem rgba(182, 255, 106, 0.75),
+      0 0 3rem rgba(118, 185, 0, 0.6),
+      0 0 5rem rgba(118, 185, 0, 0.4);
+  }
 }
 
 @keyframes neonShift {
@@ -261,6 +305,58 @@ h2 {
 .mock-button {
   width: 100%;
   margin-top: 1rem;
+}
+
+.mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.mode-toggle-label {
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.mode-toggle-group {
+  display: flex;
+  flex: 1;
+  gap: 0.4rem;
+  padding: 0.3rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.mode-button {
+  flex: 1;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.mode-button.active {
+  border-color: rgba(118, 185, 0, 0.6);
+  color: #061006;
+  background: linear-gradient(135deg, var(--green-soft), var(--green));
+  font-weight: 800;
+}
+
+.mode-button:hover:not(.active) {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  transform: none;
 }
 
 .error-note {
@@ -459,9 +555,9 @@ h2 {
 
 .wave-cluster {
   display: grid;
-  grid-template-columns: repeat(5, minmax(12rem, 20rem));
-  gap: clamp(1rem, 1.5vw, 1.5rem);
-  width: min(94vw, 102rem);
+  grid-template-columns: repeat(5, minmax(9.6rem, 16rem));
+  gap: clamp(0.8rem, 1.2vw, 1.2rem);
+  width: min(90vw, 84rem);
 }
 
 .wave-cluster.right {
@@ -469,29 +565,39 @@ h2 {
 }
 
 .candidate-chip {
-  min-height: clamp(11rem, 18vh, 14rem);
-  padding: clamp(1.2rem, 1.6vw, 1.6rem);
-  border-radius: 2rem;
+  min-height: clamp(8.8rem, 14.4vh, 11.2rem);
+  padding: clamp(0.95rem, 1.28vw, 1.28rem);
+  border-radius: 1.6rem;
 }
 
 .candidate-chip span {
-  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  font-size: clamp(0.85rem, 1.08vw, 1.04rem);
 }
 
 .candidate-chip strong {
-  margin-top: clamp(1.2rem, 1.8vw, 1.8rem);
-  font-size: clamp(1.7rem, 2.5vw, 2.5rem);
+  margin-top: clamp(0.95rem, 1.44vw, 1.44rem);
+  font-size: clamp(1.36rem, 2vw, 2rem);
   line-height: 1;
 }
 
 .candidate-chip small {
-  margin-top: clamp(0.45rem, 0.7vw, 0.7rem);
-  font-size: clamp(0.95rem, 1.3vw, 1.25rem);
+  margin-top: clamp(0.36rem, 0.56vw, 0.56rem);
+  font-size: clamp(0.76rem, 1.04vw, 1rem);
 }
 
 .candidate-chip em {
-  margin-top: clamp(0.35rem, 0.55vw, 0.55rem);
-  font-size: clamp(1.3rem, 1.7vw, 1.65rem);
+  margin-top: clamp(0.28rem, 0.44vw, 0.44rem);
+  font-size: clamp(1.04rem, 1.36vw, 1.32rem);
+}
+
+.wave-stage .stage-heading {
+  top: clamp(1rem, 3vh, 1.75rem);
+}
+
+.wave-stage .stage-heading h2 {
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  letter-spacing: 0.04em;
+  opacity: 0.75;
 }
 
 .candidate-chip,
@@ -917,26 +1023,57 @@ h2 {
 
 .wheel-pointer {
   position: absolute;
-  top: -1.2rem;
+  top: -1.6rem;
   left: 50%;
   z-index: 4;
-  width: 2.6rem;
-  height: 3rem;
+  width: 3.2rem;
+  height: 3.6rem;
   transform: translateX(-50%);
-  background: linear-gradient(180deg, var(--green-soft), var(--green) 68%, #4f7f00);
-  clip-path: polygon(50% 100%, 0 0, 100% 0);
-  filter: drop-shadow(0 0.4rem 0.7rem rgba(118, 185, 0, 0.55));
+  background:
+    linear-gradient(180deg, #ffffff 0%, #d4ff7a 22%, var(--green) 72%, #365a00 100%);
+  clip-path: polygon(50% 100%, 12% 18%, 28% 0%, 72% 0%, 88% 18%);
+  filter:
+    drop-shadow(0 0 0.5rem rgba(182, 255, 106, 0.95))
+    drop-shadow(0 0.5rem 1.1rem rgba(118, 185, 0, 0.6))
+    drop-shadow(0 0 2.4rem rgba(118, 185, 0, 0.4));
+}
+
+.wheel-pointer::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: 42%;
+  height: 22%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+  border-radius: 50%;
+  filter: blur(1px);
+  opacity: 0.7;
 }
 
 .wheel-ring {
   position: absolute;
-  inset: -0.7rem;
+  inset: -1.1rem;
   border-radius: 50%;
   background:
-    conic-gradient(from 0deg, rgba(118, 185, 0, 0.55), rgba(182, 255, 106, 0.85), rgba(118, 185, 0, 0.25), rgba(182, 255, 106, 0.55), rgba(118, 185, 0, 0.55));
-  filter: blur(2px);
-  opacity: 0.9;
+    conic-gradient(
+      from 0deg,
+      rgba(118, 185, 0, 0.32),
+      rgba(182, 255, 106, 0.82),
+      rgba(118, 185, 0, 0.12),
+      rgba(182, 255, 106, 0.55),
+      rgba(118, 185, 0, 0.32)
+    );
+  filter: blur(6px);
+  opacity: 0.85;
   z-index: 0;
+  animation: wheelRingPulse 4.8s ease-in-out infinite;
+}
+
+@keyframes wheelRingPulse {
+  0%, 100% { opacity: 0.7; transform: scale(0.995); }
+  50% { opacity: 1; transform: scale(1.01); }
 }
 
 .wheel-disc {

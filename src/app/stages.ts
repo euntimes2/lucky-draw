@@ -17,7 +17,7 @@ export const STAGE_LABELS: Record<AppStage, string> = {
   idle: 'Load candidates',
   data_loaded: 'All candidates loaded',
   scan: 'All candidates loaded',
-  wave1: '10 survived',
+  wave1: '20 survived',
   wave2: '10 more survived',
   final20: 'Final 20',
   transform: 'Final round begins',

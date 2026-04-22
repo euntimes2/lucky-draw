@@ -1,30 +1,23 @@
 import { motion } from 'framer-motion';
 
+export type DrawMode = 'pick1' | 'pick5';
+
 type IdleStageProps = {
   fileName?: string;
-  pastedValue: string;
   error?: string;
-  stats?: {
-    rawRows: number;
-    droppedRows: number;
-    duplicateRows: number;
-    validRows: number;
-  };
+  mode: DrawMode;
   onFile: (file: File) => void;
-  onPasteChange: (value: string) => void;
-  onParsePaste: () => void;
   onMock: () => void;
+  onModeChange: (mode: DrawMode) => void;
 };
 
 export function IdleStage({
   fileName,
-  pastedValue,
   error,
-  stats,
+  mode,
   onFile,
-  onPasteChange,
-  onParsePaste,
   onMock,
+  onModeChange,
 }: IdleStageProps) {
   return (
     <motion.section className="stage idle-stage" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -32,7 +25,6 @@ export function IdleStage({
         <p className="eyebrow">Stage-ready lucky draw</p>
         <h1>
           <span className="neon-brand">NVIDIA</span>
-          <span className="neon-brand">DGX SPARK</span>
           <span className="hero-subtitle">LUCKY DRAW</span>
         </h1>
       </div>
@@ -51,33 +43,36 @@ export function IdleStage({
           />
         </label>
 
-        <div className="paste-panel">
-          <label htmlFor="participant-paste">Paste CSV or JSON</label>
-          <textarea
-            id="participant-paste"
-            value={pastedValue}
-            placeholder="name,affiliation,email&#10;Kim Minsoo,SNU,private@example.com"
-            onChange={(event) => onPasteChange(event.currentTarget.value)}
-          />
-          <button type="button" onClick={onParsePaste}>
-            Parse pasted data
-          </button>
-        </div>
-
         <button type="button" className="mock-button" onClick={onMock}>
           Load 700 rehearsal candidates
         </button>
 
+        <div className="mode-toggle" role="radiogroup" aria-label="Draw mode">
+          <span className="mode-toggle-label">Mode</span>
+          <div className="mode-toggle-group">
+            <button
+              type="button"
+              role="radio"
+              aria-checked={mode === 'pick1'}
+              className={`mode-button${mode === 'pick1' ? ' active' : ''}`}
+              onClick={() => onModeChange('pick1')}
+            >
+              Pick 1
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={mode === 'pick5'}
+              className={`mode-button${mode === 'pick5' ? ' active' : ''}`}
+              onClick={() => onModeChange('pick5')}
+            >
+              Pick 5
+            </button>
+          </div>
+        </div>
+
         {fileName ? <p className="load-note">Loaded file: {fileName}</p> : null}
         {error ? <p className="error-note">{error}</p> : null}
-        {stats ? (
-          <div className="parse-stats">
-            <span>{stats.validRows.toLocaleString()} valid</span>
-            <span>{stats.rawRows.toLocaleString()} rows</span>
-            <span>{stats.duplicateRows.toLocaleString()} duplicates removed</span>
-            <span>{stats.droppedRows.toLocaleString()} empty names dropped</span>
-          </div>
-        ) : null}
       </div>
     </motion.section>
   );
