@@ -92,6 +92,26 @@ button:disabled {
   isolation: isolate;
 }
 
+.built-by {
+  position: fixed;
+  top: 0.9rem;
+  right: 1rem;
+  z-index: 15;
+  padding: 0.2rem 0.55rem;
+  color: rgba(246, 255, 240, 0.28);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.built-by:hover,
+.built-by:focus-visible {
+  color: rgba(182, 255, 106, 0.75);
+  outline: none;
+}
+
 .brand-footer {
   position: fixed;
   left: clamp(1rem, 36px, 2rem);

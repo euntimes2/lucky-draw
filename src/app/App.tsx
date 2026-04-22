@@ -13,7 +13,6 @@ import { generateMockParticipants, parseSpreadsheetFile, type ParseResult } from
 import { clearWave, drawWave, initSelection } from '../features/selection/selection';
 import { createDrawLog, downloadDrawLog } from '../lib/logger/drawLog';
 import { createSeed } from '../lib/random/seededRandom';
-import { DEFAULT_PARTICIPANTS } from '../data/participants';
 import { playStageCue } from '../lib/audio/cues';
 import type { Participant } from '../types/participant';
 import type { AppStage, DrawLog, SelectionResult } from '../types/selection';
@@ -73,18 +72,6 @@ export function App() {
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
-  }, []);
-
-  useEffect(() => {
-    if (DEFAULT_PARTICIPANTS.length < 20) return;
-    applyParseResult({
-      participants: DEFAULT_PARTICIPANTS,
-      rawRows: DEFAULT_PARTICIPANTS.length,
-      droppedRows: 0,
-      duplicateRows: 0,
-    });
-    setFileName('Registered participants');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -373,6 +360,14 @@ export function App() {
         <img src="/snu.png" alt="Seoul National University" />
         <img src="/nvidia_logo.png" alt="NVIDIA" />
       </div>
+      <a
+        className="built-by"
+        href="https://github.com/euntimes2"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Built by @euntimes2
+      </a>
       <OperatorPanel
         stage={stage}
         stageLabel={resolveStageLabel(stage, mode)}
