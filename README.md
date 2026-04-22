@@ -2,18 +2,20 @@
 
 Stage-ready finalist selection web app for live events. Built with React 19, TypeScript, Vite, Framer Motion, and canvas-confetti.
 
+![NVIDIA Lucky Draw](public/first_page.png)
+
 ## Features
 
 - **Two modes**
   - **Pick 1** — draws 20 finalists in a single wave → 20-slice spinning wheel → 1 winner
   - **Pick 5** — draws 5 finalists → fireworks celebration (no wheel)
-- **Click-time randomness** — every Draw / Stop click generates a fresh seed (`Date.now()` + `crypto`) on the spot. No pre-computation.
-- **Dramatic waves** — 4-second ticker shuffles through the full pool, then finalists pop in sequentially with spring physics.
-- **Spinning wheel** — custom SVG with dark neon gradient slices, 22-second ease-out deceleration with zoom-in toward the pointer.
-- **Continuous fireworks** — canvas-confetti bursts trigger non-stop on winner / Pick 5 celebration screen.
+
 - **Spreadsheet input** — `.xlsx` / `.csv` / Google Sheets CSV. Token-based header matching (Korean + English aliases). Email-based deduplication.
+
 - **Operator controls** — center CTA for primary action, bottom-right strip for back / replay / restart / sound / fullscreen / export log. Shortcuts: `Space` (next/stop), `R` (replay), `F` (fullscreen), `M` (mute).
+
 - **Resolution-independent** — locked to a 1440×900 canvas, scaled uniformly on any display via `transform: scale()`.
+
 - **Audit log** — JSON export with seeds, picked IDs, and participant fingerprint hash.
 
 ## Run
