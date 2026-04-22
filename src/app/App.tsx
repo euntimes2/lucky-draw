@@ -58,6 +58,26 @@ export function App() {
     setWaveStarted(false);
   }, [stage, stageRunId]);
 
+  // Lock the UI to a 15" reference canvas (1440x900 CSS px) and scale uniformly
+  // so the layout stays identical across 13"/15"/17"/24" displays.
+  useEffect(() => {
+    const REF_WIDTH = 1440;
+    const REF_HEIGHT = 900;
+    const update = () => {
+      const scale = Math.min(
+        window.innerWidth / REF_WIDTH,
+        window.innerHeight / REF_HEIGHT
+      );
+      document.body.style.setProperty('zoom', String(scale));
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('resize', update);
+      document.body.style.removeProperty('zoom');
+    };
+  }, []);
+
   useEffect(() => {
     if (DEFAULT_PARTICIPANTS.length < 20) return;
     applyParseResult({
