@@ -1,66 +1,148 @@
-# NVIDIA Lucky Draw
+# 🎉 NVIDIA Lucky Draw
 
-Stage-ready finalist selection web app for live events.
+> **Stage-ready finalist selection system**  
+> Built for Bryan Catanzaro's NVIDIA session @ Seoul National University (303 Building · 2026-04-22)
+
+---
 
 ![NVIDIA Lucky Draw](public/first_page.png)
 
-### Tech stack
+---
 
-![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)
-![Framer Motion](https://img.shields.io/badge/Framer%20Motion-12-0055FF?style=flat-square&logo=framer&logoColor=white)
-![canvas-confetti](https://img.shields.io/badge/canvas--confetti-1.9-FFB800?style=flat-square)
-![read-excel-file](https://img.shields.io/badge/read--excel--file-9-1D6F42?style=flat-square&logo=microsoftexcel&logoColor=white)
-![Node](https://img.shields.io/badge/Node-%E2%89%A518-5FA04E?style=flat-square&logo=node.js&logoColor=white)
+## ✨ Overview
 
-## Features
+**NVIDIA Lucky Draw** is a high-impact, live-event-ready raffle system designed for large audiences.
 
-- **Two modes**
-  - **Pick 1** — draws 20 finalists in a single wave → 20-slice spinning wheel → 1 winner
-  - **Pick 5** — draws 5 finalists → fireworks celebration (no wheel)
-- **Click-time randomness** — every Draw / Stop click seeds the RNG on the spot (`Date.now()` + `crypto`). Nothing is pre-computed.
-- **Dramatic waves** — 4-second ticker shuffles through the full pool, then finalists pop in sequentially with spring physics.
-- **Spinning wheel** — custom SVG, dark neon gradient slices, 22-second ease-out deceleration with zoom toward the pointer.
-- **Fireworks finale** — `canvas-confetti` bursts for 5 seconds on the winner / Pick 5 celebration screen.
-- **Spreadsheet input** — `.xlsx` / `.csv` / Google Sheets CSV. Token-based bilingual header matching. Email-based deduplication.
-- **Operator controls** — center CTA for primary action, bottom-right strip for back / replay / restart / sound / fullscreen / export log. Shortcuts: `Space` (next / stop), `R` (replay), `F` (fullscreen), `M` (mute).
-- **Resolution-independent** — locked to a 1440×900 canvas, scaled uniformly on any display via `transform: scale()`.
-- **Audit log** — JSON export with seeds, picked IDs, and participant fingerprint hash.
+It turns a simple draw into a **cinematic experience** —  
+from dynamic shuffling to a dramatic final reveal.
 
-## Run
+- ⚡ Real-time randomness (no precomputation)
+- 🎬 Stage-optimized animations
+- 🎯 Designed for large-scale audiences (100–1000+ participants)
+
+---
+
+## 🧠 Core Experience
+
+### 🎡 Pick 1 Mode
+- 20 finalists selected in a **dramatic wave**
+- Spinning wheel (SVG-based)
+- 22-second cinematic deceleration
+- Final zoom-in winner reveal
+
+### 🎆 Pick 5 Mode
+- 5 finalists instantly revealed
+- Fireworks celebration (no wheel)
+- Optimized for fast-paced events
+
+---
+
+## 🔥 Highlights
+
+- 🎲 **True randomness at click-time**
+  - Seed = `Date.now()` + `crypto`
+  - Nothing precomputed → fully fair
+
+- 🌊 **Dramatic selection waves**
+  - Full pool shuffle → finalists pop in sequentially
+  - Spring-based motion (Framer Motion)
+
+- 🎡 **Custom spinning wheel**
+  - Neon gradient slices
+  - Smooth 22s ease-out physics
+  - Camera zoom toward pointer
+
+- 🎆 **Fireworks finale**
+  - Powered by canvas-confetti
+  - 5-second celebration burst
+
+- 📊 **Flexible spreadsheet input**
+  - `.xlsx`, `.csv`, Google Sheets
+  - Smart bilingual header parsing
+  - Email-based deduplication
+
+- 🎛 **Operator-friendly controls**
+  - Keyboard shortcuts:
+    - `Space` → next / stop
+    - `R` → replay
+    - `F` → fullscreen
+    - `M` → mute
+
+- 🖥 **Resolution-independent**
+  - Fixed 1440×900 canvas
+  - Auto scaling for any display
+
+- 🧾 **Audit log export**
+  - Seeds
+  - Selected IDs
+  - Participant fingerprint hash
+
+---
+
+## 🛠 Tech Stack
+
+- React 19
+- TypeScript 5.6
+- Vite 7
+- Framer Motion
+- canvas-confetti
+- read-excel-file
+- Node ≥ 18
+
+---
+
+## 🚀 Getting Started
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
-npm run build      # production bundle in dist/
+npm run dev       # http://localhost:5173
+npm run build     # production build
 ```
 
-## Excel / CSV format
+---
 
-- **First row = header**, second row onwards = participants.
-- **Minimum 20 participants** (app refuses to start below that).
-- If the workbook contains a sheet named **`정리`**, that sheet is used; otherwise the first sheet.
-- Column order does not matter — the parser matches headers by **token**. Header cells can be long bilingual composites (e.g. `"1. 이름 / Name\n\n예시) 홍길동 / Gildong Hong"`) and still match on any recognised token.
+## 📄 Input Format (Excel / CSV)
 
-| Internal field | Required | Accepted header tokens (case / spacing insensitive) |
-| --- | --- | --- |
-| `name` | **yes** | `이름`, `성명`, `참가자`, `name`, `fullname`, `participant`, `candidate` |
-| `affiliation` | optional | `학과`, `전공`, `major`, `department`, `단과대학`, `college`, `school`, `학교`, `소속`, `affiliation`, `organization`, `company`, `회사`, `기관`, `team` |
-| `email` | optional | `이메일`, `email`, `mail` |
-| `phone` | optional | `휴대폰`, `연락처`, `전화`, `mobile`, `phone` |
+- First row → **header**
+- Minimum **20 participants required**
+- If sheet `정리` exists → automatically used
 
-Duplicates are removed by email when present, otherwise by normalised `name + affiliation`. Unknown columns are preserved on each record's `metadata` and never rendered on stage.
+### Supported Fields
 
-### Minimal example
+| Field | Required | Notes |
+|------|--------|------|
+| name | ✅ | 필수 |
+| affiliation | ❌ | optional |
+| email | ❌ | deduplication |
+| phone | ❌ | optional |
 
-| 이름 / Name | 학과 / Major | 이메일 / Email |
-| --- | --- | --- |
-| 홍길동 / Gildong Hong | 컴퓨터공학부 | hong@snu.ac.kr |
+---
+
+### 📌 Example
+
+| 이름 / Name | 학과 / Major | 이메일 |
+|------------|------------|--------|
+| 홍길동 | 컴퓨터공학부 | hong@snu.ac.kr |
 | Akanksh Eati | Materials Science | akanksh@gmail.com |
 | 김우진 | 통계학과 | kim@snu.ac.kr |
-| … (20+ rows) |
 
-## Credits
+---
 
-Built by [@euntimes2](https://github.com/euntimes2).
+## 🎯 Why This Exists
+
+Most raffle tools are:
+- boring ❌
+- predictable ❌
+- not stage-friendly ❌
+
+This one is built to:
+- **engage the audience**
+- **look impressive on screen**
+- **feel fair and transparent**
+
+---
+
+## 🙌 Credits
+
+Built with care by  
+https://github.com/euntimes2
