@@ -12,3 +12,6 @@ dist
 # Editor/IDE
 .vscode
 .idea
+
+# Internal design doc — keep local only
+claude.md
