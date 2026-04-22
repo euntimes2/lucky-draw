@@ -18,22 +18,33 @@
 }
 
 html,
-body,
-#root {
+body {
   width: 100%;
-  min-width: 320px;
   height: 100%;
   margin: 0;
+  overflow: hidden;
+  background: #010201;
 }
 
 body {
-  overflow: hidden;
   color: var(--text);
   background:
     radial-gradient(circle at 20% 15%, rgba(118, 185, 0, 0.18), transparent 28rem),
     radial-gradient(circle at 75% 35%, rgba(184, 255, 104, 0.1), transparent 24rem),
     linear-gradient(135deg, #010201, #071008 48%, #020302);
   font-family: var(--font-body);
+}
+
+/* Scale a fixed 1440x900 canvas to any viewport so the layout is identical
+   on 13"/15"/17"/24" displays. --ui-scale is set at runtime in App.tsx. */
+#root {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1440px;
+  height: 900px;
+  transform-origin: center center;
+  transform: translate(-50%, -50%) scale(var(--ui-scale, 1));
 }
 
 button,
@@ -83,18 +94,18 @@ button:disabled {
 
 .brand-footer {
   position: fixed;
-  left: clamp(1rem, 2.5vw, 2rem);
-  bottom: clamp(1rem, 2.5vh, 1.75rem);
+  left: clamp(1rem, 36px, 2rem);
+  bottom: clamp(1rem, 22.5px, 1.75rem);
   z-index: 15;
   display: flex;
   align-items: center;
-  gap: clamp(0.8rem, 1.4vw, 1.4rem);
+  gap: clamp(0.8rem, 20.16px, 1.4rem);
   pointer-events: none;
   opacity: 0.92;
 }
 
 .brand-footer img {
-  height: clamp(6rem, 12.6vh, 9.6rem);
+  height: clamp(6rem, 113.4px, 9.6rem);
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 0.3rem 0.8rem rgba(0, 0, 0, 0.55));
@@ -118,15 +129,15 @@ button:disabled {
   display: grid;
   place-items: center;
   min-height: 100%;
-  padding: clamp(1rem, 3vw, 3rem);
-  padding-bottom: clamp(5rem, 12vh, 9rem);
+  padding: clamp(1rem, 43.2px, 3rem);
+  padding-bottom: clamp(5rem, 108px, 9rem);
 }
 
 .eyebrow {
   margin: 0 0 0.65rem;
   color: var(--green-soft);
   font-family: var(--font-display);
-  font-size: clamp(0.78rem, 1.1vw, 0.95rem);
+  font-size: clamp(0.78rem, 15.84px, 0.95rem);
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -142,7 +153,7 @@ h2 {
 
 h1 {
   max-width: 14ch;
-  font-size: clamp(4rem, 10vw, 9.6rem);
+  font-size: clamp(4rem, 144px, 9.6rem);
 }
 
 .hero-copy h1 {
@@ -173,7 +184,7 @@ h1 {
 .hero-subtitle {
   white-space: nowrap;
   color: #f9fff0;
-  font-size: clamp(3rem, 7.6vw, 7.2rem);
+  font-size: clamp(3rem, 109.44px, 7.2rem);
   font-weight: 700;
   letter-spacing: -0.045em;
   text-shadow:
@@ -208,7 +219,7 @@ h1 {
 }
 
 h2 {
-  font-size: clamp(3.2rem, 8vw, 8rem);
+  font-size: clamp(3.2rem, 115.2px, 8rem);
 }
 
 .hero-copy {
@@ -219,13 +230,13 @@ h2 {
   max-width: 35rem;
   margin: 1.4rem 0 0;
   color: var(--muted);
-  font-size: clamp(1rem, 1.35vw, 1.25rem);
+  font-size: clamp(1rem, 19.44px, 1.25rem);
   line-height: 1.6;
 }
 
 .idle-stage {
   grid-template-columns: minmax(18rem, 1fr) minmax(22rem, 34rem);
-  gap: clamp(2rem, 5vw, 5rem);
+  gap: clamp(2rem, 72px, 5rem);
   place-items: center;
 }
 
@@ -384,7 +395,7 @@ h2 {
 .primary-cta {
   position: fixed;
   left: 50%;
-  top: 88vh;
+  top: 792px;
   z-index: 25;
   display: inline-flex;
   align-items: center;
@@ -396,7 +407,7 @@ h2 {
   color: #061006;
   background: linear-gradient(135deg, var(--green-soft), var(--green));
   font-family: var(--font-display);
-  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  font-size: clamp(1.05rem, 21.6px, 1.35rem);
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -443,7 +454,7 @@ h2 {
   flex-direction: column;
   align-items: flex-end;
   gap: 0.55rem;
-  max-width: calc(100vw - 2rem);
+  max-width: calc(1440px - 2rem);
   padding: 0.7rem 0.9rem;
   border: 1px solid var(--line);
   border-radius: 1.25rem;
@@ -501,8 +512,8 @@ h2 {
 .stage-heading,
 .roulette-header {
   position: absolute;
-  top: clamp(2rem, 7vh, 5rem);
-  left: clamp(1.25rem, 5vw, 5rem);
+  top: clamp(2rem, 63px, 5rem);
+  left: clamp(1.25rem, 72px, 5rem);
   z-index: 2;
 }
 
@@ -541,7 +552,7 @@ h2 {
   white-space: nowrap;
   color: rgba(246, 255, 240, 0.36);
   font-family: var(--font-display);
-  font-size: clamp(1.1rem, 2.4vw, 2.1rem);
+  font-size: clamp(1.1rem, 34.56px, 2.1rem);
   font-weight: 700;
 }
 
@@ -556,8 +567,8 @@ h2 {
 .wave-cluster {
   display: grid;
   grid-template-columns: repeat(5, minmax(9.6rem, 16rem));
-  gap: clamp(0.8rem, 1.2vw, 1.2rem);
-  width: min(90vw, 84rem);
+  gap: clamp(0.8rem, 17.28px, 1.2rem);
+  width: min(1296px, 84rem);
 }
 
 .wave-cluster.right {
@@ -565,37 +576,37 @@ h2 {
 }
 
 .candidate-chip {
-  min-height: clamp(8.8rem, 14.4vh, 11.2rem);
-  padding: clamp(0.95rem, 1.28vw, 1.28rem);
+  min-height: clamp(8.8rem, 129.6px, 11.2rem);
+  padding: clamp(0.95rem, 18.432px, 1.28rem);
   border-radius: 1.6rem;
 }
 
 .candidate-chip span {
-  font-size: clamp(0.85rem, 1.08vw, 1.04rem);
+  font-size: clamp(0.85rem, 15.552px, 1.04rem);
 }
 
 .candidate-chip strong {
-  margin-top: clamp(0.95rem, 1.44vw, 1.44rem);
-  font-size: clamp(1.36rem, 2vw, 2rem);
+  margin-top: clamp(0.95rem, 20.736px, 1.44rem);
+  font-size: clamp(1.36rem, 28.8px, 2rem);
   line-height: 1;
 }
 
 .candidate-chip small {
-  margin-top: clamp(0.36rem, 0.56vw, 0.56rem);
-  font-size: clamp(0.76rem, 1.04vw, 1rem);
+  margin-top: clamp(0.36rem, 8.064px, 0.56rem);
+  font-size: clamp(0.76rem, 14.976px, 1rem);
 }
 
 .candidate-chip em {
-  margin-top: clamp(0.28rem, 0.44vw, 0.44rem);
-  font-size: clamp(1.04rem, 1.36vw, 1.32rem);
+  margin-top: clamp(0.28rem, 6.336px, 0.44rem);
+  font-size: clamp(1.04rem, 19.584px, 1.32rem);
 }
 
 .wave-stage .stage-heading {
-  top: clamp(1rem, 3vh, 1.75rem);
+  top: clamp(1rem, 27px, 1.75rem);
 }
 
 .wave-stage .stage-heading h2 {
-  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-size: clamp(1.2rem, 28.8px, 1.8rem);
   letter-spacing: 0.04em;
   opacity: 0.75;
 }
@@ -638,7 +649,7 @@ h2 {
   display: block;
   margin-top: 1.1rem;
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 1.65vw, 1.65rem);
+  font-size: clamp(1.15rem, 23.76px, 1.65rem);
   line-height: 1;
 }
 
@@ -725,20 +736,20 @@ h2 {
 .ticker-item strong {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1rem, 1.25vw, 1.3rem);
+  font-size: clamp(1rem, 18px, 1.3rem);
   color: rgba(246, 255, 240, 0.78);
 }
 
 .ticker-item em {
   font-family: var(--font-body);
   font-style: normal;
-  font-size: clamp(0.82rem, 1.05vw, 1.05rem);
+  font-size: clamp(0.82rem, 15.12px, 1.05rem);
   color: var(--green-soft);
 }
 
 .ticker-item > span {
   font-family: var(--font-body);
-  font-size: clamp(0.74rem, 0.95vw, 0.95rem);
+  font-size: clamp(0.74rem, 13.68px, 0.95rem);
   color: rgba(246, 255, 240, 0.4);
 }
 
@@ -772,7 +783,7 @@ h2 {
   margin: 0;
   color: var(--muted);
   font-family: var(--font-display);
-  font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+  font-size: clamp(0.95rem, 17.28px, 1.15rem);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -786,14 +797,14 @@ h2 {
   display: grid;
   place-items: center;
   gap: 1.4rem;
-  width: min(82vw, 58rem);
+  width: min(1180.8px, 58rem);
   text-align: center;
 }
 
 .wave-drawing-name {
   display: grid;
   place-items: center;
-  min-height: clamp(5rem, 10vh, 8rem);
+  min-height: clamp(5rem, 90px, 8rem);
   width: 100%;
   overflow: hidden;
 }
@@ -801,7 +812,7 @@ h2 {
 .wave-drawing-name span {
   display: inline-block;
   font-family: var(--font-display);
-  font-size: clamp(3rem, 7vw, 6rem);
+  font-size: clamp(3rem, 100.8px, 6rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--green-soft);
@@ -812,7 +823,7 @@ h2 {
   display: inline-block;
   max-width: 36rem;
   color: var(--muted);
-  font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+  font-size: clamp(0.95rem, 18.72px, 1.15rem);
   letter-spacing: 0.04em;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -844,29 +855,29 @@ h2 {
 
 .final-grid-stage {
   align-items: stretch;
-  padding-top: clamp(6.5rem, 13vh, 9rem);
-  padding-bottom: clamp(13rem, 26vh, 18rem);
+  padding-top: clamp(6.5rem, 117px, 9rem);
+  padding-bottom: clamp(13rem, 234px, 18rem);
 }
 
 .final-grid-stage .stage-heading {
-  top: clamp(1.25rem, 4vh, 2.25rem);
+  top: clamp(1.25rem, 36px, 2.25rem);
 }
 
 .final-grid-stage .stage-heading h2 {
-  font-size: clamp(1.9rem, 3.6vw, 3.6rem);
+  font-size: clamp(1.9rem, 51.84px, 3.6rem);
 }
 
 .final-grid-stage .stage-heading .eyebrow {
   margin-bottom: 0.35rem;
-  font-size: clamp(0.72rem, 0.95vw, 0.85rem);
+  font-size: clamp(0.72rem, 13.68px, 0.85rem);
 }
 
 .final-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   grid-auto-rows: minmax(0, 1fr);
-  gap: clamp(0.6rem, 1vw, 1rem);
-  width: min(94vw, 92rem);
+  gap: clamp(0.6rem, 14.4px, 1rem);
+  width: min(1353.6px, 92rem);
   height: 100%;
   max-height: 100%;
   margin-top: 0;
@@ -877,33 +888,33 @@ h2 {
   flex-direction: column;
   justify-content: flex-start;
   min-height: 0;
-  padding: clamp(0.85rem, 1.2vw, 1.35rem);
+  padding: clamp(0.85rem, 17.28px, 1.35rem);
   overflow: hidden;
 }
 
 .final-card strong {
-  margin-top: clamp(0.45rem, 0.8vw, 0.85rem);
-  font-size: clamp(1.2rem, 1.65vw, 1.85rem);
+  margin-top: clamp(0.45rem, 11.52px, 0.85rem);
+  font-size: clamp(1.2rem, 23.76px, 1.85rem);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .final-card small {
-  margin-top: clamp(0.3rem, 0.55vw, 0.6rem);
-  font-size: clamp(0.9rem, 1.15vw, 1.15rem);
+  margin-top: clamp(0.3rem, 7.92px, 0.6rem);
+  font-size: clamp(0.9rem, 16.56px, 1.15rem);
 }
 
 .final-card em {
-  margin-top: clamp(0.3rem, 0.5vw, 0.55rem);
-  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  margin-top: clamp(0.3rem, 7.2px, 0.55rem);
+  font-size: clamp(1.05rem, 19.44px, 1.3rem);
 }
 
 .transform-grid {
   display: grid;
   grid-template-columns: repeat(10, minmax(5.6rem, 1fr));
   gap: 0.8rem;
-  width: min(88vw, 82rem);
+  width: min(1267.2px, 82rem);
   margin-top: 5.5rem;
 }
 
@@ -991,25 +1002,25 @@ h2 {
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding-bottom: clamp(5rem, 12vh, 9rem);
+  padding-bottom: clamp(5rem, 108px, 9rem);
 }
 
 .wheel-heading {
   position: absolute;
-  top: clamp(2rem, 7vh, 5rem);
-  left: clamp(1.25rem, 5vw, 5rem);
+  top: clamp(2rem, 63px, 5rem);
+  left: clamp(1.25rem, 72px, 5rem);
   z-index: 3;
 }
 
 .wheel-heading h2 {
-  font-size: clamp(2.2rem, 4vw, 4.8rem);
+  font-size: clamp(2.2rem, 57.6px, 4.8rem);
 }
 
 .wheel-frame {
   position: relative;
-  width: min(70vh, 44rem);
+  width: min(630px, 44rem);
   aspect-ratio: 1 / 1;
-  margin-top: clamp(3rem, 5vh, 5rem);
+  margin-top: clamp(3rem, 45px, 5rem);
 }
 
 .wheel-zoom {
@@ -1092,7 +1103,7 @@ h2 {
 .wheel-winner-banner {
   position: fixed;
   left: 50%;
-  top: 78vh;
+  top: 702px;
   z-index: 24;
   display: grid;
   gap: 0.35rem;
@@ -1112,24 +1123,24 @@ h2 {
 .wheel-winner-banner strong {
   color: var(--text);
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-size: clamp(1.4rem, 34.56px, 2rem);
   line-height: 1;
 }
 
 .wheel-winner-banner small {
   color: var(--green-soft);
-  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  font-size: clamp(0.85rem, 17.28px, 1.05rem);
 }
 
 .roulette-header {
-  right: min(24rem, 30vw);
+  right: min(24rem, 432px);
   display: flex;
   align-items: end;
   justify-content: space-between;
 }
 
 .roulette-header h2 {
-  font-size: clamp(2.2rem, 4vw, 5.5rem);
+  font-size: clamp(2.2rem, 57.6px, 5.5rem);
 }
 
 .roulette-header span {
@@ -1138,7 +1149,7 @@ h2 {
 
 .roulette-shell {
   position: absolute;
-  inset: clamp(7rem, 17vh, 10rem) min(24rem, 29vw) 2rem clamp(1rem, 4vw, 4rem);
+  inset: clamp(7rem, 153px, 10rem) min(24rem, 417.6px) 2rem clamp(1rem, 57.6px, 4rem);
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 2rem;
@@ -1206,7 +1217,7 @@ h2 {
 
 .winner-aura {
   position: absolute;
-  width: min(62vw, 44rem);
+  width: min(892.8px, 44rem);
   aspect-ratio: 1;
   border-radius: 50%;
   background:
@@ -1219,10 +1230,10 @@ h2 {
 .winner-card {
   position: relative;
   z-index: 2;
-  width: min(86vw, 62rem);
+  width: min(1238.4px, 62rem);
   border: 1px solid rgba(182, 255, 106, 0.42);
   border-radius: 2.4rem;
-  padding: clamp(2rem, 6vw, 5rem);
+  padding: clamp(2rem, 86.4px, 5rem);
   background:
     linear-gradient(140deg, rgba(255, 255, 255, 0.12), transparent 42%),
     rgba(4, 9, 5, 0.82);
@@ -1233,21 +1244,21 @@ h2 {
 }
 
 .winner-card h2 {
-  font-size: clamp(4.5rem, 13vw, 12rem);
+  font-size: clamp(4.5rem, 187.2px, 12rem);
 }
 
 .winner-card span {
   display: block;
   margin-top: 1rem;
   color: var(--green-soft);
-  font-size: clamp(1.25rem, 2.5vw, 2rem);
+  font-size: clamp(1.25rem, 36px, 2rem);
 }
 
 .winner-card .winner-email {
   margin-top: 0.5rem;
   color: rgba(246, 255, 240, 0.55);
   font-family: var(--font-body);
-  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  font-size: clamp(0.95rem, 20.16px, 1.15rem);
   letter-spacing: 0.02em;
 }
 
@@ -1322,89 +1333,3 @@ h2 {
   }
 }
 
-@media (max-width: 1180px) {
-  body {
-    overflow: auto;
-  }
-
-  .stage {
-    position: relative;
-    min-height: 100vh;
-    padding: 1.25rem;
-    padding-bottom: 10rem;
-  }
-
-  .idle-stage {
-    grid-template-columns: 1fr;
-  }
-
-  .wave-cluster,
-  .final-grid,
-  .transform-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .roulette-stage {
-    padding: 1rem;
-    padding-bottom: 10rem;
-    padding-right: 1rem;
-  }
-
-  .roulette-shell {
-    position: relative;
-    inset: auto;
-    height: 62vh;
-    margin-top: 9rem;
-  }
-
-  .roulette-header {
-    right: 1rem;
-  }
-}
-
-@media (max-width: 720px) {
-  h1 {
-    font-size: 4rem;
-  }
-
-  h2 {
-    font-size: 3.3rem;
-  }
-
-  .wave-cluster,
-  .final-grid,
-  .transform-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .scan-columns {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .parse-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .finalist-legend {
-    display: none;
-  }
-
-  .primary-cta {
-    min-width: 12rem;
-    padding: 0.9rem 1.6rem;
-    font-size: 1rem;
-  }
-
-  .operator-panel {
-    left: 1rem;
-    right: 1rem;
-  }
-
-  .operator-status {
-    justify-content: flex-start;
-  }
-
-  .operator-actions {
-    justify-content: flex-start;
-  }
-}
