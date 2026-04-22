@@ -235,27 +235,24 @@ export function App() {
   function handleStartWave() {
     if (!selection) return;
     if (stage !== 'wave1' && stage !== 'wave2') return;
-    const currentWave = stage === 'wave1' ? selection.wave1 : selection.wave2;
-    const alreadyDrawn = currentWave.length === waveSize;
-    if (!alreadyDrawn) {
-      const newSeed = createSeed();
-      const nextSelection = drawWave(selection, stage, newSeed, waveSize);
-      setSelection(nextSelection);
-      setSeed(
-        [nextSelection.seeds.wave1, nextSelection.seeds.wave2].filter(Boolean).join(' | ')
-      );
-      setDrawLog((current) =>
-        current
-          ? {
-              ...current,
-              wave1Ids: nextSelection.wave1.map((p) => p.id),
-              wave2Ids: nextSelection.wave2.map((p) => p.id),
-              final20Ids: nextSelection.final20.map((p) => p.id),
-              seed: [nextSelection.seeds.wave1, nextSelection.seeds.wave2].filter(Boolean).join(' | '),
-            }
-          : current
-      );
-    }
+    // Always freshly sample on click — the click moment itself seeds the RNG.
+    const newSeed = createSeed();
+    const nextSelection = drawWave(selection, stage, newSeed, waveSize);
+    setSelection(nextSelection);
+    setSeed(
+      [nextSelection.seeds.wave1, nextSelection.seeds.wave2].filter(Boolean).join(' | ')
+    );
+    setDrawLog((current) =>
+      current
+        ? {
+            ...current,
+            wave1Ids: nextSelection.wave1.map((p) => p.id),
+            wave2Ids: nextSelection.wave2.map((p) => p.id),
+            final20Ids: nextSelection.final20.map((p) => p.id),
+            seed: [nextSelection.seeds.wave1, nextSelection.seeds.wave2].filter(Boolean).join(' | '),
+          }
+        : current
+    );
     setWaveStarted(true);
   }
 
